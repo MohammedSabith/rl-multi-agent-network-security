@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netsim"
+version = "0.1.0"
+description = "Multi-agent RL attacker vs defender in simulated network environments"
+requires-python = ">=3.10"
+dependencies = [
+    "gymnasium>=1.0.0",
+    "stable-baselines3>=2.3.0",
+    "sb3-contrib>=2.3.0",
+    "networkx>=3.2",
+    "numpy>=1.26.0",
+    "pyyaml>=6.0",
+    "torch>=2.1.0",
+    "matplotlib>=3.8.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,120 @@
+{
+  "rounds": [
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.048,
+      "rl_atk_vs_random_def": 0.8,
+      "scripted_atk_vs_rl_def": 1.0,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 0
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.094,
+      "rl_atk_vs_random_def": 0.686,
+      "scripted_atk_vs_rl_def": 0.044,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 1
+    },
+    {
+      "rl_vs_rl": 0.004,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.038,
+      "scripted_atk_vs_rl_def": 0.956,
+      "random_atk_vs_rl_def": 0.002,
+      "round": 2
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.546,
+      "scripted_atk_vs_rl_def": 0.0,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 3
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.172,
+      "scripted_atk_vs_rl_def": 0.938,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 4
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.004,
+      "scripted_atk_vs_rl_def": 1.0,
+      "random_atk_vs_rl_def": 0.004,
+      "round": 5
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.132,
+      "rl_atk_vs_random_def": 0.778,
+      "scripted_atk_vs_rl_def": 0.0,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 6
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.058,
+      "scripted_atk_vs_rl_def": 1.0,
+      "random_atk_vs_rl_def": 0.002,
+      "round": 7
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.098,
+      "rl_atk_vs_random_def": 0.78,
+      "scripted_atk_vs_rl_def": 0.018,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 8
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.0,
+      "rl_atk_vs_random_def": 0.002,
+      "scripted_atk_vs_rl_def": 1.0,
+      "random_atk_vs_rl_def": 0.002,
+      "round": 9
+    },
+    {
+      "rl_vs_rl": 0.0,
+      "rl_atk_vs_scripted_def": 0.334,
+      "rl_atk_vs_random_def": 0.694,
+      "scripted_atk_vs_rl_def": 0.43,
+      "random_atk_vs_rl_def": 0.0,
+      "round": 10
+    }
+  ],
+  "checkpoints": {
+    "attacker": [
+      "results\\self_play_v3\\attacker_r0.zip",
+      "results\\self_play_v3\\attacker_r1.zip",
+      "results\\self_play_v3\\attacker_r2.zip",
+      "results\\self_play_v3\\attacker_r3.zip",
+      "results\\self_play_v3\\attacker_r4.zip",
+      "results\\self_play_v3\\attacker_r5.zip",
+      "results\\self_play_v3\\attacker_r6.zip",
+      "results\\self_play_v3\\attacker_r7.zip",
+      "results\\self_play_v3\\attacker_r8.zip",
+      "results\\self_play_v3\\attacker_r9.zip",
+      "results\\self_play_v3\\attacker_r10.zip"
+    ],
+    "defender": [
+      "results\\self_play_v3\\defender_r0.zip",
+      "results\\self_play_v3\\defender_r1.zip",
+      "results\\self_play_v3\\defender_r2.zip",
+      "results\\self_play_v3\\defender_r3.zip",
+      "results\\self_play_v3\\defender_r4.zip",
+      "results\\self_play_v3\\defender_r5.zip",
+      "results\\self_play_v3\\defender_r6.zip",
+      "results\\self_play_v3\\defender_r7.zip",
+      "results\\self_play_v3\\defender_r8.zip",
+      "results\\self_play_v3\\defender_r9.zip",
+      "results\\self_play_v3\\defender_r10.zip"
+    ]
+  }
+}

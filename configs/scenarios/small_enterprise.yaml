@@ -1,0 +1,69 @@
+name: small_enterprise
+description: "5-node enterprise network for development and testing"
+max_steps: 50
+
+nodes:
+  internet:
+    type: entry
+    services: []
+    vulnerabilities: []
+    privesc_prob: 0.0
+    value: 0.0
+    has_data: false
+    entry: true
+
+  router:
+    type: router
+    services: [ssh, http]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.7
+      - name: http_rfi
+        service: http
+        prob_success: 0.5
+    privesc_prob: 0.6
+    value: 0.0
+    has_data: false
+
+  workstation_1:
+    type: workstation
+    services: [ssh, smb]
+    vulnerabilities:
+      - name: smb_eternal_blue
+        service: smb
+        prob_success: 0.6
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  workstation_2:
+    type: workstation
+    services: [ssh]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  server:
+    type: server
+    services: [ssh, http, database]
+    vulnerabilities:
+      - name: sql_injection
+        service: database
+        prob_success: 0.4
+      - name: http_rfi
+        service: http
+        prob_success: 0.3
+    privesc_prob: 0.4
+    value: 1.0
+    has_data: true
+
+edges:
+  - [internet, router]
+  - [router, workstation_1]
+  - [router, workstation_2]
+  - [router, server]

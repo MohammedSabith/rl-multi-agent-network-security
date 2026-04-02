@@ -1,0 +1,235 @@
+name: enterprise_network
+description: "16-node enterprise network with DMZ, internal, server, and management subnets"
+max_steps: 75
+
+nodes:
+  # --- Entry Point ---
+  internet:
+    type: entry
+    services: []
+    vulnerabilities: []
+    privesc_prob: 0.0
+    value: 0.0
+    has_data: false
+    entry: true
+
+  # --- DMZ Subnet ---
+  firewall:
+    type: router
+    services: [ssh, https]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.3
+    value: 0.0
+    has_data: false
+
+  web_server:
+    type: server
+    services: [https, ssh]
+    vulnerabilities:
+      - name: apache_rce
+        service: https
+        prob_success: 0.5
+      - name: ssh_key_reuse
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  mail_server:
+    type: server
+    services: [smtp, ssh]
+    vulnerabilities:
+      - name: smtp_overflow
+        service: smtp
+        prob_success: 0.4
+    privesc_prob: 0.3
+    value: 0.0
+    has_data: false
+
+  # --- Internal Subnet ---
+  internal_router:
+    type: router
+    services: [ssh, snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.6
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.4
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  workstation_1:
+    type: workstation
+    services: [ssh, smb]
+    vulnerabilities:
+      - name: smb_eternal_blue
+        service: smb
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  workstation_2:
+    type: workstation
+    services: [ssh, smb]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.4
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  workstation_3:
+    type: workstation
+    services: [ssh, rdp]
+    vulnerabilities:
+      - name: rdp_bluekeep
+        service: rdp
+        prob_success: 0.5
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  # --- Server Subnet ---
+  app_server:
+    type: server
+    services: [https, ssh, jdbc]
+    vulnerabilities:
+      - name: struts_rce
+        service: https
+        prob_success: 0.4
+      - name: jdbc_injection
+        service: jdbc
+        prob_success: 0.3
+    privesc_prob: 0.3
+    value: 0.0
+    has_data: false
+
+  db_server:
+    type: server
+    services: [mysql, ssh]
+    vulnerabilities:
+      - name: sql_injection
+        service: mysql
+        prob_success: 0.3
+      - name: mysql_udf
+        service: mysql
+        prob_success: 0.2
+    privesc_prob: 0.3
+    value: 1.0
+    has_data: true
+
+  backup_server:
+    type: server
+    services: [ssh, nfs]
+    vulnerabilities:
+      - name: nfs_no_root_squash
+        service: nfs
+        prob_success: 0.5
+    privesc_prob: 0.4
+    value: 0.5
+    has_data: true
+
+  file_server:
+    type: server
+    services: [smb, ssh]
+    vulnerabilities:
+      - name: smb_signing_disabled
+        service: smb
+        prob_success: 0.4
+    privesc_prob: 0.4
+    value: 0.2
+    has_data: false
+
+  # --- Management Subnet ---
+  admin_workstation:
+    type: workstation
+    services: [ssh, rdp]
+    vulnerabilities:
+      - name: rdp_bluekeep
+        service: rdp
+        prob_success: 0.4
+      - name: ssh_key_reuse
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.5
+    value: 0.3
+    has_data: false
+
+  monitoring_server:
+    type: server
+    services: [https, ssh, snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.4
+    privesc_prob: 0.3
+    value: 0.1
+    has_data: false
+
+  # --- Additional connectivity nodes ---
+  dmz_switch:
+    type: router
+    services: [snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.5
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  server_switch:
+    type: router
+    services: [snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.5
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+edges:
+  # Internet → Firewall (the only way in)
+  - [internet, firewall]
+
+  # DMZ subnet
+  - [firewall, dmz_switch]
+  - [dmz_switch, web_server]
+  - [dmz_switch, mail_server]
+
+  # Firewall → Internal (path 1: through the network)
+  - [firewall, internal_router]
+
+  # Internal subnet
+  - [internal_router, workstation_1]
+  - [internal_router, workstation_2]
+  - [internal_router, workstation_3]
+
+  # DMZ → Server subnet (path 2: through DMZ to servers)
+  - [web_server, app_server]
+  - [app_server, server_switch]
+
+  # Internal → Server subnet (path 1 continues)
+  - [internal_router, server_switch]
+
+  # Server subnet
+  - [server_switch, db_server]
+  - [server_switch, backup_server]
+  - [server_switch, file_server]
+
+  # Management subnet
+  - [internal_router, admin_workstation]
+  - [admin_workstation, monitoring_server]
+
+  # Cross-subnet link: management has server access
+  - [admin_workstation, server_switch]

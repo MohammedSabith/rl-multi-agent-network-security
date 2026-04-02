@@ -1,0 +1,273 @@
+name: enterprise_v2
+description: "18-node enterprise with multiple entry points and data paths for strategic diversity"
+max_steps: 60
+
+nodes:
+  # --- Entry Point ---
+  internet:
+    type: entry
+    services: []
+    vulnerabilities: []
+    privesc_prob: 0.0
+    value: 0.0
+    has_data: false
+    entry: true
+
+  # --- Alternative Entry Points ---
+  vpn_concentrator:
+    type: router
+    services: [vpn, ssh]
+    vulnerabilities:
+      - name: vpn_auth_bypass
+        service: vpn
+        prob_success: 0.25
+    privesc_prob: 0.3
+    value: 0.0
+    has_data: false
+
+  wifi_ap:
+    type: router
+    services: [wifi, ssh]
+    vulnerabilities:
+      - name: wpa_handshake_crack
+        service: wifi
+        prob_success: 0.35
+    privesc_prob: 0.3
+    value: 0.0
+    has_data: false
+
+  # --- DMZ Subnet ---
+  firewall:
+    type: router
+    services: [ssh, https]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  web_server:
+    type: server
+    services: [https, ssh]
+    vulnerabilities:
+      - name: apache_rce
+        service: https
+        prob_success: 0.5
+      - name: ssh_key_reuse
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  mail_server:
+    type: server
+    services: [smtp, ssh]
+    vulnerabilities:
+      - name: smtp_overflow
+        service: smtp
+        prob_success: 0.4
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  # --- Internal Subnet ---
+  internal_router:
+    type: router
+    services: [ssh, snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.6
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.4
+    privesc_prob: 0.6
+    value: 0.0
+    has_data: false
+
+  workstation_1:
+    type: workstation
+    services: [ssh, smb]
+    vulnerabilities:
+      - name: smb_eternal_blue
+        service: smb
+        prob_success: 0.5
+    privesc_prob: 0.6
+    value: 0.0
+    has_data: false
+
+  workstation_2:
+    type: workstation
+    services: [ssh, smb]
+    vulnerabilities:
+      - name: ssh_bruteforce
+        service: ssh
+        prob_success: 0.4
+    privesc_prob: 0.6
+    value: 0.0
+    has_data: false
+
+  workstation_3:
+    type: workstation
+    services: [ssh, rdp]
+    vulnerabilities:
+      - name: rdp_bluekeep
+        service: rdp
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  # --- Server Subnet ---
+  app_server:
+    type: server
+    services: [https, ssh, jdbc]
+    vulnerabilities:
+      - name: struts_rce
+        service: https
+        prob_success: 0.4
+      - name: jdbc_injection
+        service: jdbc
+        prob_success: 0.3
+    privesc_prob: 0.4
+    value: 0.0
+    has_data: false
+
+  db_server:
+    type: server
+    services: [mysql, ssh]
+    vulnerabilities:
+      - name: sql_injection
+        service: mysql
+        prob_success: 0.3
+      - name: mysql_udf
+        service: mysql
+        prob_success: 0.2
+    privesc_prob: 0.4
+    value: 1.0
+    has_data: true
+
+  backup_server:
+    type: server
+    services: [ssh, nfs]
+    vulnerabilities:
+      - name: nfs_no_root_squash
+        service: nfs
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.5
+    has_data: true
+
+  file_server:
+    type: server
+    services: [smb, ssh]
+    vulnerabilities:
+      - name: smb_signing_disabled
+        service: smb
+        prob_success: 0.4
+    privesc_prob: 0.5
+    value: 0.2
+    has_data: false
+
+  # --- Management Subnet ---
+  admin_workstation:
+    type: workstation
+    services: [ssh, rdp]
+    vulnerabilities:
+      - name: rdp_bluekeep
+        service: rdp
+        prob_success: 0.4
+      - name: ssh_key_reuse
+        service: ssh
+        prob_success: 0.3
+    privesc_prob: 0.6
+    value: 0.3
+    has_data: false
+
+  monitoring_server:
+    type: server
+    services: [https, ssh, snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.4
+    privesc_prob: 0.4
+    value: 0.1
+    has_data: false
+
+  # --- Connectivity nodes ---
+  dmz_switch:
+    type: router
+    services: [snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+  server_switch:
+    type: router
+    services: [snmp]
+    vulnerabilities:
+      - name: snmp_community_string
+        service: snmp
+        prob_success: 0.5
+    privesc_prob: 0.5
+    value: 0.0
+    has_data: false
+
+edges:
+  # --- Entry paths (3 ways in) ---
+  - [internet, firewall]
+  - [internet, vpn_concentrator]
+  - [internet, wifi_ap]
+
+  # VPN bypasses DMZ, goes straight to internal
+  - [vpn_concentrator, internal_router]
+
+  # WiFi enters via employee workstation
+  - [wifi_ap, workstation_3]
+
+  # --- DMZ subnet ---
+  - [firewall, dmz_switch]
+  - [dmz_switch, web_server]
+  - [dmz_switch, mail_server]
+
+  # Firewall to internal
+  - [firewall, internal_router]
+
+  # Mail server phishing pivot to internal
+  - [mail_server, internal_router]
+
+  # --- Internal subnet ---
+  - [internal_router, workstation_1]
+  - [internal_router, workstation_2]
+  - [internal_router, workstation_3]
+
+  # --- DMZ to server subnet (path via web/app) ---
+  - [web_server, app_server]
+  - [app_server, server_switch]
+
+  # --- Internal to server subnet ---
+  - [internal_router, server_switch]
+
+  # --- Server subnet ---
+  - [server_switch, db_server]
+  - [server_switch, backup_server]
+  - [server_switch, file_server]
+
+  # --- Management subnet ---
+  - [internal_router, admin_workstation]
+  - [admin_workstation, monitoring_server]
+  - [admin_workstation, server_switch]
+
+  # --- Data path bypasses (skip server_switch) ---
+  # DBA connects directly to database
+  - [admin_workstation, db_server]
+  # Backup agent on workstation pushes to backup server
+  - [workstation_1, backup_server]
